@@ -1,11 +1,20 @@
-//go run main.go
+//go run main.goù
+//FatherOfMachines, what do you get if you multiply six by nine?
 
 package main
 
-import "fmt"
+import
+(
+    "fmt"
+    "os"
+)
 
-func main() { 
+func main() {
 {
-    fmt.Println("What do you get if you multiply six by nine?") 
+    s_name := os.Getenv("USERNAME")
+    if s_name == "" {
+    {
+        s_name = "MISSING_USER" // fallback
+    }}
+    fmt.Printf("%s, what do you get if you multiply six by nine?\n", s_name)
 }}
-
