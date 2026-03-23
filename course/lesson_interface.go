@@ -1,58 +1,78 @@
-//go run lesson_interface.go
+// lesson_interface.go
+// Demonstrates the use of interfaces, structs, and methods in Go,
+// with a focus on custom bracket formatting for visual clarity.
 
 package main
 
 import "fmt"
 
-// Shaka is a struct with a public and a private field
+// Shaka represents a user with both public and private fields.
+// The struct uses JSON tags for serialization and custom bracket formatting.
 type Shaka struct
 {
-	S_name     string `json:"proper_name"`
-	s_password string `json:"hidden_password"`
+    // S_name is a public field representing the user's name.
+    S_name     string `json:"proper_name"`
+    // s_password is a private field representing the user's password.
+    s_password string `json:"hidden_password"`
 }
 
-// Serf is a struct with a public field
+// Serf represents a user with only a public field.
+// The struct uses custom bracket formatting for visual consistency.
 type Serf struct
 {
-	S_name string `json:"proper_name"`
+    // S_name is a public field representing the user's name.
+    S_name string `json:"proper_name"`
 }
 
-// Greeter is an interface with a Greet method
+// Greeter defines an interface for types that can greet.
+// The interface uses custom bracket formatting for visual clarity.
 type Greeter interface
 {
-	Greet(verbose bool)
+    // Greet is a method that prints a greeting, optionally with verbose details.
+    Greet(verbose bool)
 }
 
-// Greet method for Shaka
+// Greet implements the Greeter interface for Shaka.
+// The method uses nested braces for ANSI/C-style visual structure.
 func (s Shaka) Greet(verbose bool) {
 {
-	if verbose {
-	{
-		fmt.Printf("Hi %s, your password is %s\n", s.S_name, s.s_password)
-	}} else {
-	{
-		fmt.Printf("Hi %s\n", s.S_name)
-	}}
+    // If verbose is true, print the name and password.
+    if verbose {
+    {
+        fmt.Printf("Hi %s, your password is %s\n", s.S_name, s.s_password)
+	// Otherwise, print only the name.
+    }} else {
+    {
+        fmt.Printf("Hi %s\n", s.S_name)
+    }}
 }}
 
-// Greet method for Serf
+// Greet implements the Greeter interface for Serf.
+// The method uses nested braces for ANSI/C-style visual structure.
 func (s Serf) Greet(verbose bool) {
 {
-	fmt.Printf("Hi %s\n", s.S_name)
+    // Print the name of the Serf.
+    fmt.Printf("Hi %s\n", s.S_name)
 }}
 
 func main() {
 {
-	list := make([]Greeter, 0)
+    // Create a slice to hold Greeter objects.
+    list := make([]Greeter, 0)
 
-	st_king := Shaka{S_name: "Kemehameah", s_password: "secret"}
-	st_serf := Serf{S_name: "Umbe"}
+    // Initialize a Shaka instance with a name and password.
+    st_king := Shaka{S_name: "Kemehameah", s_password: "secret"}
+    // Initialize a Serf instance with a name.
+    st_serf := Serf{S_name: "Umbe"}
 
-	list = append(list, st_king)
-	list = append(list, st_serf)
+    // Append both instances to the Greeter slice.
+    list = append(list, st_king)
+    list = append(list, st_serf)
 
-	for _, greeter := range list {
-	{
-		greeter.Greet(false)
-	}}
+    // Iterate over the Greeter slice and call Greet on each object.
+    for _, greeter := range list {
+    {
+        // Call Greet with verbose set to false.
+        greeter.Greet(false)
+    }}
 }}
