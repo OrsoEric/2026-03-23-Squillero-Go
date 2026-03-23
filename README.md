@@ -58,3 +58,10 @@ all modules verified
 ```
 
 # external MOD
+
+go get github will add a dependency
+
+go.mod list the version
+
+go.sum has the hashes
+
