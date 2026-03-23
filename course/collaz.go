@@ -2,20 +2,19 @@ package main
 
 import "fmt"
 
-func collatz(n int, sequence *[]int) {
+func collatz(n int) {
 {
 	defer fmt.Println(n)
-    *sequence = append(*sequence, n)
     if n == 1 {
 	{
         return
     }}
     if n%2 == 0 {
 	{
-        collatz(n/2, sequence)
+        collatz(n/2)
     }} else {
 	{
-        collatz(3*n+1, sequence)
+        collatz(3*n+1)
     }}
 }}
 
@@ -30,6 +29,5 @@ func main() {
         return
     }}
 
-    var sequence []int
-    collatz(n, &sequence)
+    collatz(n)
 }}
