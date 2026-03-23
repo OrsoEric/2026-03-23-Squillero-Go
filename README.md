@@ -35,3 +35,15 @@ go build test.go
 D:\Data\Project\Project Programming\Project Go\2026-03-23 Squillero Go>test.exe
 Shaka, when the walls fell
 ```
+
+# ?????
+
+mkdir course 
+
+cd course
+
+go mod init course
+
+D:\Data\Project\Project Programming\Project Go\2026-03-23 Squillero Go\course>go run main.go
+
+What do you get if you multiply six by nine?
