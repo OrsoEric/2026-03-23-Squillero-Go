@@ -22,9 +22,11 @@ func runGarbageCollectorDemo() {
 {
 	obj := &MyObject{name: "example"}
 
-	runtime.SetFinalizer(obj, func(o *MyObject) {
-	{
-		fmt.Println("Object garbage collected:", o.name)
+	runtime.SetFinalizer(
+		obj,
+		func(o *MyObject) {
+		{
+			fmt.Println("Object garbage collected:", o.name)
 	}})
 
 	fmt.Println("Object created")

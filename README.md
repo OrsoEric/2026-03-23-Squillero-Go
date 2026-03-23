@@ -122,3 +122,9 @@ a = 42
 it's a dummy variable write only that is discarded
 
 to fool the compiler 
+
+# defer
+
+do something before the last curly bracket
+
+in recursive code will unfurl in reverse direction
