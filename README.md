@@ -83,3 +83,34 @@ require (
 	golang.org/x/term v0.1.0 // indirect
 )
 ```
+
+```cmd
+D:\Data\Project\Project Programming\Project Go\2026-03-23 Squillero Go\course>go vet
+# course
+# [course]
+vet.exe: .\main.go:12:6: main redeclared in this block
+```
+
+# Visibility
+
+local name lowercse
+
+public names Uppercase
+
+# any
+
+data type any will bypass the static type check
+
+# pointer
+
+used to give large structures between function, and modify back
+
+unsafe keyword to do pointer math nonsense
+
+```go
+a := 41
+b := &a
+*b++
+
+a = 42
+```
