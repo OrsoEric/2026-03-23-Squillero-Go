@@ -47,3 +47,14 @@ go mod init course
 D:\Data\Project\Project Programming\Project Go\2026-03-23 Squillero Go\course>go run main.go
 
 What do you get if you multiply six by nine?
+
+# MOD
+
+```cmd
+go mod verify
+
+D:\Data\Project\Project Programming\Project Go\2026-03-23 Squillero Go\course>go mod verify
+all modules verified
+```
+
+# external MOD
