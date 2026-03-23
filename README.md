@@ -114,3 +114,11 @@ b := &a
 
 a = 42
 ```
+
+# garbage collector
+
+# _ blank identifier
+
+it's a dummy variable write only that is discarded
+
+to fool the compiler 
