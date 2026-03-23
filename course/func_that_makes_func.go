@@ -1,5 +1,13 @@
 //go run func_that_makes_func.go
 
+/*
+D:\Data\Project\Project Programming\Project Go\2026-03-23 Squillero Go\course>go run func_that_makes_func.go
+21
+41
+201
+401
+*/
+
 package main
 
 import "fmt"
