@@ -21,7 +21,8 @@ func main() {
 
     // Append to slice
     as_teletubbies_b = append(as_teletubbies_b, "mee", "raa")
-	//as_teletubbies_b = append( as_teletubbies_b, [...]string{"mee", "raa"} )
+	//.\demo_array.go:24:47: cannot use []string{…} (value of type []string) as string value in argument to append
+	//as_teletubbies_b = append( as_teletubbies_b, []string{"mee", "raa"} )
     fmt.Println(as_teletubbies_b)
 
 }}
