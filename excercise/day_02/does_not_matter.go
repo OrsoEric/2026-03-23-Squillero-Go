@@ -277,6 +277,43 @@ func Fn_split_scanner(i_s_file_path string) ([]St_pair, error) {
 }}
 
 // -----------------------------------------------------------------------------
+// SCAN PAIRS
+// -----------------------------------------------------------------------------
+// This function scan pairs
+
+
+func Fn_scan_pair(
+	i_ast_pair []St_pair) (
+	o_n_num_invalid int,
+	o_n_sum_invalid int,
+	o_e_error error) {
+{
+	var n_num_invalid int = 0
+	var n_sum_invalid int = 0
+
+	//For each pair
+	for _, st_pair := range(i_ast_pair) {
+	{
+		//for each value in the range
+		for n_cnt := st_pair.n_value[0]; n_cnt <= st_pair.n_value[0]; n_cnt++ {
+		{
+			x_invalid, e_error := Fn_is_half_number_same( n_cnt ) 
+			if e_error != nil {
+			{
+				return 0, 0, fmt.Errorf("invalid invalid chec on number: %n", n_cnt)
+			}}
+			if x_invalid == true {
+			{
+				n_num_invalid += 1
+				n_sum_invalid += n_cnt
+			}}
+		}}
+	}}
+
+	return n_num_invalid, n_sum_invalid, nil
+}}
+
+// -----------------------------------------------------------------------------
 // CHECK MIRROR
 // -----------------------------------------------------------------------------
 // Fn_is_half_number_same determines whether an integer can be split into two
@@ -416,6 +453,20 @@ func Part1() {
 		}}
 	}}
 	
+
+	//-----------------------------------------------------------------------------
+	// CHECK PAIRS
+	//-----------------------------------------------------------------------------
+
+	n_num_invalid, n_sum_invalid, e_error := Fn_scan_pair( ast_pair )
+    if (e_error != nil) {
+    {
+        fmt.Println("Error:", e_error)
+        return
+    }}
+
+	log.Printf("Num Invalid: %d", n_num_invalid )
+	log.Printf("Sum Invalid: %d", n_sum_invalid )
 
 	log.Printf("STOP LOG")
 }}
