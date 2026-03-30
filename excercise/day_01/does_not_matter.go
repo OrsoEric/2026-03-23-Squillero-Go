@@ -64,9 +64,15 @@ func (
 // SEQUENCE DECODER
 //-----------------------------------------------------------------------------
 
+type E_direction bool
+const (
+	LEFT E_direction = false
+	RIGHT E_direction = true
+)
+
 type St_instruction struct
 {
-    x_right bool
+    x_right E_direction
     n_step  int
 }
 
@@ -82,6 +88,8 @@ func Fn_decode_sequence(
 {
     var out []St_instruction
 
+	var x_direction E_direction
+
     for _, s_line := range i_as_line {
     {
         if (len(s_line) < 2) {
@@ -90,10 +98,17 @@ func Fn_decode_sequence(
         }}
 
         s_dir := s_line[0]
-		if (s_dir != 'L' && s_dir != 'R') {
-        {
-            return nil, fmt.Errorf("invalid direction in token: %s", s_line)
-        }}
+		if s_dir == 'L' {
+		{
+			x_direction = LEFT
+		}} else if s_dir == 'R' {
+		{
+			x_direction = RIGHT
+		}} else {
+		{
+			return nil, fmt.Errorf("invalid direction in token: %s", s_line)
+		}}
+
 
         s_num := s_line[1:]
 
@@ -104,7 +119,7 @@ func Fn_decode_sequence(
         }}
 
         step := St_instruction{
-            x_right: (s_dir == 'R'),
+            x_right: x_direction,
             n_step:  n_num,
         }
 
@@ -149,7 +164,7 @@ func Fn_zero_counter_from_instruction(
 				//If I have steps left
 				n_step -= 1
 
-				if st_instruction.x_right == true {
+				if st_instruction.x_right == RIGHT {
 				{
 					n_dial += 1
 					if n_dial > 99 {
