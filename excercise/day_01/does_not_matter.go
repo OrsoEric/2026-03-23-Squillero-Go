@@ -5,7 +5,6 @@
 
 */
 
-
 package day_01
 
 import
@@ -16,12 +15,12 @@ import
     "strings"
 )
 
-type SequenceReader struct
+type Fn_sequence_reader struct
 {
     Path string
 }
 
-func (i_cl_file *SequenceReader) Read() ([]string, error) {
+func (i_cl_file *Fn_sequence_reader) Read() ([]string, error) {
 {
     i_st_file, e_error := os.Open(i_cl_file.Path)
     if (e_error != nil) {
@@ -55,18 +54,18 @@ func Shaka() {
 {
 	fmt.Println("Shaka, when the walls fell")
 
-	reader := SequenceReader{
+	cl_sequence_reader := Fn_sequence_reader{
          Path: "day_01/puzzle_input.txt",
 	}
 
-    seq, err := reader.Read()
-    if (err != nil) {
+    as_sequence, e_error := cl_sequence_reader.Read()
+    if (e_error != nil) {
     {
-        fmt.Println("Error:", err)
+        fmt.Println("Error:", e_error)
         return
     }}
 
-    for _, s := range seq {
+    for _, s := range as_sequence {
     {
         fmt.Println(s)
     }}
