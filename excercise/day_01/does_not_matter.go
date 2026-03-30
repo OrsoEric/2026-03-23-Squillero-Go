@@ -28,7 +28,10 @@ type Fn_sequence_reader struct
     I_s_path string
 }
 
-func (i_cl_file *Fn_sequence_reader) Read() ([]string, error) {
+func (
+	i_cl_file *Fn_sequence_reader) Read() (
+	[]string,
+	error) {
 {
     i_st_file, e_error := os.Open(i_cl_file.I_s_path)
     if (e_error != nil) {
@@ -72,7 +75,10 @@ type Fn_sequence_decoder struct
     i_as_line string
 }
 
-func Fn_decode_sequence(i_as_line []string) ([]St_instruction, error) {
+func Fn_decode_sequence(
+	i_as_line []string) (
+	[]St_instruction,
+	error) {
 {
     var out []St_instruction
 
@@ -112,7 +118,12 @@ func Fn_decode_sequence(i_as_line []string) ([]St_instruction, error) {
 // ZERO COUNTER
 //-----------------------------------------------------------------------------
 
-func Fn_zero_counter_from_instruction(i_n_start int, i_ast_instruction []St_instruction, i_x_measure_zero_during_passage bool) (int, error) {
+func Fn_zero_counter_from_instruction(
+	i_n_start int,
+	i_ast_instruction []St_instruction,
+	i_x_measure_zero_during_passage bool) (
+	int,
+	error) {
 {
 	var n_cnt_zero int = 0
 	var n_dial int = i_n_start
