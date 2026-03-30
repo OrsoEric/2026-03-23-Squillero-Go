@@ -25,7 +25,7 @@ import
     "os"
 	"bufio"
     "strings"
-	"strconv"
+	//"strconv"
 	"bytes"
 )
 
@@ -95,12 +95,12 @@ func Fn_sequence_reader(i_s_file_path string)(
 
 type St_pair struct
 {
-    n_value [2]int
+    s_value [2]string
 }
 
 func (i_st_pair St_pair) String() string {
 {
-    return fmt.Sprintf("%d-%d", i_st_pair.n_value[0], i_st_pair.n_value[1])
+    return fmt.Sprintf("%s-%s", i_st_pair.s_value[0], i_st_pair.s_value[1])
 }}
 
 
@@ -155,16 +155,9 @@ func Fn_find_pair_in_content(i_as_content []string)(
                 return nil, fmt.Errorf("invalid pair format: %s", s_chunk)
             }
 
-            // Convert to ints
-            n_a, errA := strconv.Atoi(as_range[0])
-            n_b, errB := strconv.Atoi(as_range[1])
-            if errA != nil || errB != nil {
-                return nil, fmt.Errorf("invalid number in pair: %s", s_chunk)
-            }
-
             // Append pair
             ast_pair = append(ast_pair, St_pair{
-                n_value: [2]int{n_a, n_b},
+                s_value: [2]string{as_range[0], as_range[1]},
             })
         }}
     }}
@@ -258,14 +251,7 @@ func Fn_split_scanner(i_s_file_path string) ([]St_pair, error) {
             return nil, fmt.Errorf("invalid token: %s", i_s_tokens)
         }}
 
-        n_left, e_error_left := strconv.Atoi(i_as_part[0])
-        n_right, e_error_right := strconv.Atoi(i_as_part[1])
-        if e_error_left != nil || e_error_right != nil {
-		{
-            return nil, fmt.Errorf("invalid number in token: %s", i_s_tokens)
-        }}
-
-        ast_pair = append(ast_pair, St_pair{n_value: [2]int{n_left, n_right}})
+		ast_pair = append(ast_pair, St_pair{s_value: [2]string{i_as_part[0], i_as_part[1]}} )
     }}
 
     if e_error := cl_scanner.Err(); e_error != nil {
