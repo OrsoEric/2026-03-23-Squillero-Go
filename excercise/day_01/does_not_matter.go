@@ -175,8 +175,8 @@ func Part1() {
 	//STEP1: read the instructions
 
 	cl_sequence_reader := Fn_sequence_reader{
-		I_s_path: "day_01/puzzle_cue.txt",
-    	//I_s_path: "day_01/puzzle_input.txt",
+		//I_s_path: "day_01/puzzle_cue.txt",
+    	I_s_path: "day_01/puzzle_input.txt",
 	}
 
     as_sequence, e_error := cl_sequence_reader.Read()
