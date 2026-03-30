@@ -214,3 +214,14 @@ _constraint.go
 Value: 42, Type: int
 Value: 3.14, Type: float64
 ```
+
+# CONCURRENCY GORUNTIME
+
+Concurrency doing things at the same time
+	e.g. mouse and mp3 on single thread machine
+
+Parallelism executing many timgs at the same time
+
+Go claim a million gorutines
+
+

@@ -27,6 +27,7 @@ import
     "strings"
 	"strconv"
 	"bytes"
+	"time"
 )
 
 // -----------------------------------------------------------------------------
@@ -288,6 +289,8 @@ func Fn_scan_pair(
 	o_n_sum_invalid int,
 	o_e_error error) {
 {
+	t_start := time.Now()
+
 	var n_num_invalid int = 0
 	var n_sum_invalid int = 0
 
@@ -310,8 +313,108 @@ func Fn_scan_pair(
 		}}
 	}}
 
+	t_elapsed := time.Since(t_start)
+	log.Printf("Elapsed: %d\n", t_elapsed.Microseconds())
+
 	return n_num_invalid, n_sum_invalid, nil
 }}
+
+// -----------------------------------------------------------------------------
+// PARALLEL CHECK MIRROR
+// -----------------------------------------------------------------------------
+// Fn_scan_pair_parallel launches one goroutine per St_pair.
+// Each goroutine scans its numeric range and reports:
+//
+//   • number of invalid values
+//   • sum of invalid values
+//   • error (if any)
+//
+// The parent function aggregates all results.
+//
+// This allows ALL ranges to be processed concurrently.
+//
+// NOTE:
+//   The ANSI‑bracket style is preserved exactly as requested.
+//
+func Fn_scan_pair_parallel(
+    i_ast_pair []St_pair) (
+    o_n_num_invalid int,
+    o_n_sum_invalid int,
+    o_e_error error) {
+{
+	t_start := time.Now()
+
+    // Result structure for channel communication
+    type St_result struct {
+        n_num_invalid int
+        n_sum_invalid int
+        e_error       error
+    }
+
+    // Create channel with buffer = number of pairs
+    ch_result := make(chan St_result, len(i_ast_pair))
+
+    // Launch one goroutine per pair
+    for _, st_pair := range(i_ast_pair) {
+    {
+        go func(i_st_pair St_pair) {
+        {
+            var n_local_invalid int = 0
+            var n_local_sum int = 0
+
+            // Scan the numeric range
+            for n_cnt := i_st_pair.n_value[0]; n_cnt <= i_st_pair.n_value[1]; n_cnt++ {
+            {
+                x_invalid, e_error := Fn_is_half_number_same(n_cnt)
+                if e_error != nil {
+                {
+                    ch_result <- St_result{
+                        n_num_invalid: 0,
+                        n_sum_invalid: 0,
+                        e_error:       fmt.Errorf("invalid check on number: %d", n_cnt),
+                    }
+                    return
+                }}
+
+                if x_invalid == true {
+                {
+                    n_local_invalid += 1
+                    n_local_sum += n_cnt
+                }}
+            }}
+
+            // Send result back
+            ch_result <- St_result{
+                n_num_invalid: n_local_invalid,
+                n_sum_invalid: n_local_sum,
+                e_error:       nil,
+            }
+        }}(st_pair)
+    }}
+
+    // Collect results
+    var n_total_invalid int = 0
+    var n_total_sum int = 0
+
+    for n_cnt := 0; n_cnt < len(i_ast_pair); n_cnt++ {
+    {
+        st_res := <-ch_result
+
+        if st_res.e_error != nil {
+        {
+            return 0, 0, st_res.e_error
+        }}
+
+        n_total_invalid += st_res.n_num_invalid
+        n_total_sum += st_res.n_sum_invalid
+    }}
+
+	t_elapsed := time.Since(t_start)
+	log.Printf("Elapsed: %d\n", t_elapsed.Microseconds())
+
+    return n_total_invalid, n_total_sum, nil
+}}
+
 
 // -----------------------------------------------------------------------------
 // CHECK MIRROR
@@ -359,7 +462,7 @@ func Fn_is_half_number_same(
     // Compare halves
     if (s_left == s_right) {
     {
-		log.Printf("SAME %s %s", s_left, s_right)
+		//log.Printf("SAME %s %s", s_left, s_right)
         // Halves match
         return true, nil
     }} else {
@@ -464,10 +567,29 @@ func Part1() {
 	
 
 	//-----------------------------------------------------------------------------
-	// CHECK PAIRS
+	// CHECK PAIRS SERIAL
 	//-----------------------------------------------------------------------------
 
+	fmt.Printf("=========SERIAL=======\n")
+	fmt.Printf("Pairs: %d\n", len(ast_pair))
 	n_num_invalid, n_sum_invalid, e_error := Fn_scan_pair( ast_pair )
+    if (e_error != nil) {
+    {
+        fmt.Println("Error:", e_error)
+        return
+    }}
+
+	
+	log.Printf("Num Invalid: %d", n_num_invalid )
+	log.Printf("Sum Invalid: %d", n_sum_invalid )
+
+	//-----------------------------------------------------------------------------
+	// CHECK PAIRS PARALLEL
+	//-----------------------------------------------------------------------------
+
+	fmt.Printf("=========PARALLEL=======\n")
+	fmt.Printf("Pairs: %d\n", len(ast_pair))
+	n_num_invalid, n_sum_invalid, e_error = Fn_scan_pair_parallel( ast_pair )
     if (e_error != nil) {
     {
         fmt.Println("Error:", e_error)
