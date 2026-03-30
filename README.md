@@ -141,6 +141,7 @@ import
 	"github.com/pterm/pterm"
 )
 //functions and if have a post processor to brick ansi curly brackets, but proper indentation is restored with scope brackets
+//Note how its bracket, new line bracket, indented code, double close bracket
 func my_function() {
 {
 	if (true) {
