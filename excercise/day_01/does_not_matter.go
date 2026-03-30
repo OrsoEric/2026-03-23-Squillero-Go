@@ -57,35 +57,49 @@ func (i_cl_file *Fn_sequence_reader) Read() ([]string, error) {
     return s_content, nil
 }}
 
+//-----------------------------------------------------------------------------
+// SEQUENCE DECODER
+//-----------------------------------------------------------------------------
+
 type St_instruction struct
 {
     x_right bool
     n_step  int
 }
 
-func Fn_decode_sequence(seq []string) ([]St_instruction, error) {
+type Fn_sequence_decoder struct
+{
+    i_as_line string
+}
+
+func Fn_decode_sequence(i_as_line []string) ([]St_instruction, error) {
 {
     var out []St_instruction
 
-    for _, s := range seq {
+    for _, s_line := range i_as_line {
     {
-        if (len(s) < 2) {
+        if (len(s_line) < 2) {
         {
-            return nil, fmt.Errorf("invalid token: %s", s)
+            return nil, fmt.Errorf("invalid token: %s", s_line)
         }}
 
-        dir := s[0]
-        numStr := s[1:]
-
-        amt, err := strconv.Atoi(numStr)
-        if (err != nil) {
+        s_dir := s_line[0]
+		if (s_dir != 'L' && s_dir != 'R') {
         {
-            return nil, fmt.Errorf("invalid number in token %s", s)
+            return nil, fmt.Errorf("invalid direction in token: %s", s_line)
+        }}
+
+        s_num := s_line[1:]
+
+        n_num, e_error := strconv.Atoi(s_num)
+        if (e_error != nil) {
+        {
+            return nil, fmt.Errorf("invalid number in token %s", s_line)
         }}
 
         step := St_instruction{
-            x_right: (dir == 'R'),
-            n_step:  amt,
+            x_right: (s_dir == 'R'),
+            n_step:  n_num,
         }
 
         out = append(out, step)
@@ -103,7 +117,8 @@ func Shaka() {
 	//STEP1: read the instructions
 
 	cl_sequence_reader := Fn_sequence_reader{
-    	I_s_path: "day_01/puzzle_input.txt",
+		I_s_path: "day_01/puzzle_cue.txt",
+    	//I_s_path: "day_01/puzzle_input.txt",
 	}
 
     as_sequence, e_error := cl_sequence_reader.Read()
@@ -133,10 +148,14 @@ func Shaka() {
 
 	if (true) {
 	{
-		fmt.Println("Sequence Length: %d", len(decoded))
+		fmt.Printf("Sequence Length: %d\n", len(decoded))
 		for _, d := range decoded {
 		{
 			fmt.Printf("Right=%v  Step=%d\n", d.x_right, d.n_step)
 		}}
 	}}
+
+	//STEP3:
+
+
 }}
