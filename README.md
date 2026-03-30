@@ -128,3 +128,44 @@ to fool the compiler
 do something before the last curly bracket
 
 in recursive code will unfurl in reverse direction
+
+# LLM
+
+GO is incompetently designed and doesn't allow ANSI bracket style. You are to use forced ansi brackets using scope brackets properly as per ansi style. Example below
+
+```go
+//import do not have a post processor to brick the curly bracket, designers were not strong enough to implement it in the tokenizer
+import
+(
+	"log"
+	"github.com/pterm/pterm"
+)
+//functions and if have a post processor to brick ansi curly brackets, but proper indentation is restored with scope brackets
+func my_function() {
+{
+	if (true) {
+	{
+	}}
+}}
+```
+
+# pterm dependency
+
+<details>
+<summary>XXX</summary>
+
+```
+D:\Data\Project\Project Programming\Project Go\2026-03-23 Squillero Go>go run course/2026-03-30a.go
+ INFO  Shaka
+Please select your options [type to search]:
+> [✗] Poo
+Please select your options [type to search]:                    
+> [✗] Poo                       
+  [✗] Maa                       
+  [✗] Taa                       
+  [✗] Dii                       
+enter: select | tab: confirm | left: none | right: all | type to
+ filter
+```
+
+</details>
