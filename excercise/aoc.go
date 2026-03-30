@@ -12,5 +12,5 @@ import
 // function definition
 func main() {
 {
-	day_01.Shaka()
+	day_01.Part1()
 }}

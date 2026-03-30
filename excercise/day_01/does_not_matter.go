@@ -108,9 +108,67 @@ func Fn_decode_sequence(i_as_line []string) ([]St_instruction, error) {
     return out, nil
 }}
 
+//-----------------------------------------------------------------------------
+// ZERO COUNTER
+//-----------------------------------------------------------------------------
 
-// function definition
-func Shaka() {
+func Fn_zero_counter_from_instruction(i_n_start int, i_ast_instruction []St_instruction) (int, error) {
+{
+	var n_cnt_zero int = 0
+	var n_dial int = i_n_start
+
+	for _, st_instruction := range i_ast_instruction {
+	{
+		var n_step int = st_instruction.n_step
+
+		for {
+		{
+			//If I have steps left
+			if n_step > 0 {
+			{
+				n_step -= 1
+
+				if st_instruction.x_right == true {
+				{
+					n_dial += 1
+					if n_dial > 99 {
+					{
+						n_dial = 0
+					}}
+				}} else {
+				{
+					n_dial -= 1
+					if n_dial < 0 {
+					{
+						n_dial = 99
+					}}
+
+				}}
+
+			}} else {
+			{
+				break
+			}}
+		}}
+
+		if (n_dial == 0) {	
+		{
+			n_cnt_zero += 1
+		}}
+
+		//fmt.Printf("Direction: %v | Step: %d | Dial: %d\n", st_instruction.x_right , st_instruction.n_step, n_dial)
+	}}
+
+	return n_cnt_zero, nil
+}}
+
+
+
+//-----------------------------------------------------------------------------
+// PART 1
+//-----------------------------------------------------------------------------
+
+func Part1() {
 {
 	fmt.Println("Shaka, when the walls fell")
 
@@ -139,23 +197,26 @@ func Shaka() {
 
 	//STEP2: decode the sequence into a structure
 
-	decoded, err := Fn_decode_sequence(as_sequence)
-    if (err != nil) {
+	ast_instruction, e_error := Fn_decode_sequence(as_sequence)
+    if (e_error != nil) {
     {
-        fmt.Println("Error:", err)
+        fmt.Println("Error:", e_error)
         return
     }}
 
-	if (true) {
+	if (false) {
 	{
-		fmt.Printf("Sequence Length: %d\n", len(decoded))
-		for _, d := range decoded {
+		fmt.Printf("Sequence Length: %d\n", len(ast_instruction))
+		for _, st_instruction := range ast_instruction {
 		{
-			fmt.Printf("Right=%v  Step=%d\n", d.x_right, d.n_step)
+			fmt.Printf("Right: %v | Step: %d |\n", st_instruction.x_right, st_instruction.n_step)
 		}}
 	}}
 
-	//STEP3:
+	//STEP3: count the zeros following the instructuibns
+	n_cnt_zero, e_error := Fn_zero_counter_from_instruction(50, ast_instruction)
 
+
+	fmt.Printf("Dials Zero : %d\n", n_cnt_zero )
 
 }}
