@@ -1,3 +1,19 @@
+// Package day_02 implements several utilities for reading,
+// tokenizing, and parsing puzzle input files containing numeric
+// ranges in the form "A-B,C-D,E-F,...".
+//
+// This file intentionally uses a forced ANSI‑bracket style,
+// where scope blocks are wrapped using:
+//
+//     {
+//     {
+//         ... code ...
+//     }}
+//
+// This is a stylistic choice to emulate ANSI‑style bracketing
+// and to bypass Go’s tokenizer restrictions on bracket placement.
+// No logic is altered by this formatting.
+
 package day_02
 
 //go get strconv
@@ -13,9 +29,25 @@ import
 	"bytes"
 )
 
-//-----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 // FILE READER
-//-----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
+//
+// Fn_sequence_reader reads a text file line‑by‑line and returns a slice
+// of trimmed, non‑empty strings. It is a classical scanner‑based reader.
+//
+// PARAMETERS:
+//   i_s_file_path — path to the file to read.
+//
+// RETURNS:
+//   []string — all non‑empty lines
+//   error    — any file or scanner error encountered
+//
+// NOTES:
+//   • Empty lines are skipped.
+//   • Leading/trailing whitespace is removed.
+//   • The function uses ANSI‑style double‑bracket scoping.
+//
 
 func Fn_sequence_reader(i_s_file_path string)(
 	[]string,
@@ -48,11 +80,18 @@ func Fn_sequence_reader(i_s_file_path string)(
     return s_content, nil
 }}
 
-//-----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 // SPLITTER
-//-----------------------------------------------------------------------------
-//I want to parse the slice of strings to fetch all the pairs
-// 11-22,95-115,998-1012,1188511880-1188511890,222220-222224,
+// -----------------------------------------------------------------------------
+//
+// St_pair represents a numeric range "A-B". The two integers are stored
+// in a fixed‑size array for compactness and predictable memory layout.
+//
+// Example:
+//     St_pair{ n_value: [2]int{11, 22} }
+//
+// The String() method prints the pair in "A-B" format.
+//
 
 type St_pair struct
 {
@@ -64,6 +103,31 @@ func (i_st_pair St_pair) String() string {
     return fmt.Sprintf("%d-%d", i_st_pair.n_value[0], i_st_pair.n_value[1])
 }}
 
+
+// -----------------------------------------------------------------------------
+// Fn_find_pair_in_content
+// -----------------------------------------------------------------------------
+//
+// Fn_find_pair_in_content parses a slice of strings where each string
+// contains comma‑separated numeric ranges, e.g.:
+//
+//     "11-22,95-115,998-1012"
+//
+// The function extracts all pairs across all lines.
+//
+// PARAMETERS:
+//   i_as_content — slice of input lines
+//
+// RETURNS:
+//   []St_pair — all parsed numeric pairs
+//   error     — malformed input or conversion error
+//
+// BEHAVIOR:
+//   • Splits each line by commas.
+//   • Splits each chunk by '-'.
+//   • Converts both sides to integers.
+//   • Appends a St_pair for each valid range.
+//
 
 func Fn_find_pair_in_content(i_as_content []string)(
 	[]St_pair,
@@ -112,85 +176,121 @@ func Fn_find_pair_in_content(i_as_content []string)(
 // TOKEN READER
 //-----------------------------------------------------------------------------
 
-/*
-func Fn_split_scanner(i_s_file_path string)(
-	[]St_pair,
-	error) {
-{
-
-	cl_scanner := bufio.NewScanner( i_s_file_path )
-	cl_scanner.Split( func(data []byte, atEOF bool) (int, []byte, error) {
-		switch n_index := byte.IndexByte(data, ","); {
-		case 
-
-		}
-
-	}
-
-	return nil, nil
-}}
-*/
+// -----------------------------------------------------------------------------
+// TOKEN READER (Scanner Split Function)
+// -----------------------------------------------------------------------------
+//
+// Fn_split_scanner reads a file and uses a custom bufio.SplitFunc to
+// tokenize the input based on commas. Each token is expected to be a
+// numeric range "A-B".
+//
+// This approach allows streaming tokenization without loading entire
+// lines, and without requiring commas to align with newline boundaries.
+//
+// PARAMETERS:
+//   i_s_file_path — path to the puzzle input file
+//
+// RETURNS:
+//   []St_pair — parsed numeric ranges
+//   error     — file, scanner, or parsing error
+//
+// CUSTOM SPLIT FUNCTION:
+//   • Searches for ',' in the byte buffer.
+//   • Returns the token before the comma.
+//   • At EOF, returns remaining data as final token.
+//   • Requests more data when needed.
+//
+// This is useful for extremely large files or continuous streams.
+//
 
 func Fn_split_scanner(i_s_file_path string) ([]St_pair, error) {
 {
-    file, err := os.Open(i_s_file_path)
-    if err != nil {
-        return nil, err
-    }
-    defer file.Close()
+    st_file, e_error := os.Open(i_s_file_path)
+    if e_error != nil {
+	{
+        return nil, e_error
+    }}
+    defer st_file.Close()
 
-    scanner := bufio.NewScanner(file)
+    cl_scanner := bufio.NewScanner(st_file)
 
-    // Custom split function: split on commas
-    scanner.Split(func(data []byte, atEOF bool) (advance int, token []byte, err error) {
+	// Custom split function: split on commas
+	var fn_split_comma bufio.SplitFunc = func(
+		i_s_data []byte,
+		i_x_end_of_file bool) (
+		n_index_advance int,
+		i_s_tokens []byte,
+		e_error error) {
+	{
+			// Look for a comma
+			if n_index := bytes.IndexByte(i_s_data, ','); n_index >= 0 {
+			{
+				// We found a full token ending at comma
+				return n_index + 1, bytes.TrimSpace(i_s_data[:n_index]), nil
+			}}
 
-        // Look for a comma
-        if i := bytes.IndexByte(data, ','); i >= 0 {
-            // We found a full token ending at comma
-            return i + 1, bytes.TrimSpace(data[:i]), nil
-        }
+			// If we're at EOF, return the remaining data
+			if i_x_end_of_file && len(i_s_data) > 0 {
+			{
+				return len(i_s_data), bytes.TrimSpace(i_s_data), nil
+			}}
 
-        // If we're at EOF, return the remaining data
-        if atEOF && len(data) > 0 {
-            return len(data), bytes.TrimSpace(data), nil
-        }
+			// Request more data
+			return 0, nil, nil
+    }}
 
-        // Request more data
-        return 0, nil, nil
-    })
+    // Install custom tokenizer
+    cl_scanner.Split( fn_split_comma )
 
     var ast_pair []St_pair
 
-    for scanner.Scan() {
-        tok := scanner.Text()
-        if tok == "" {
+    for cl_scanner.Scan() {
+	{
+        i_s_tokens := cl_scanner.Text()
+        if len(i_s_tokens) <= 0 {
+		{
             continue
-        }
+        }}
 
-        parts := strings.Split(tok, "-")
-        if len(parts) != 2 {
-            return nil, fmt.Errorf("invalid token: %s", tok)
-        }
+        i_as_part := strings.Split(i_s_tokens, "-")
+        if len(i_as_part) != 2 {
+		{
+            return nil, fmt.Errorf("invalid token: %s", i_s_tokens)
+        }}
 
-        a, errA := strconv.Atoi(parts[0])
-        b, errB := strconv.Atoi(parts[1])
-        if errA != nil || errB != nil {
-            return nil, fmt.Errorf("invalid number in token: %s", tok)
-        }
+        n_left, e_error_left := strconv.Atoi(i_as_part[0])
+        n_right, e_error_right := strconv.Atoi(i_as_part[1])
+        if e_error_left != nil || e_error_right != nil {
+		{
+            return nil, fmt.Errorf("invalid number in token: %s", i_s_tokens)
+        }}
 
-        ast_pair = append(ast_pair, St_pair{n_value: [2]int{a, b}})
-    }
+        ast_pair = append(ast_pair, St_pair{n_value: [2]int{n_left, n_right}})
+    }}
 
-    if err := scanner.Err(); err != nil {
-        return nil, err
-    }
+    if e_error := cl_scanner.Err(); e_error != nil {
+	{
+        return nil, e_error
+    }}
 
     return ast_pair, nil
 }}
 
-//-----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 // MAIN
-//-----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
+//
+// Part1 is the entry point for this puzzle stage. It demonstrates:
+//
+//   • Reading puzzle input
+//   • Extracting numeric ranges
+//   • Logging results
+//
+// The function currently uses Fn_split_scanner, but includes commented
+// code showing how to use Fn_sequence_reader + Fn_find_pair_in_content.
+//
+// The ANSI‑bracket style is preserved throughout.
+//
 
 func Part1() {
 {
