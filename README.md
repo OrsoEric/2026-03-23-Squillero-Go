@@ -169,3 +169,47 @@ enter: select | tab: confirm | left: none | right: all | type to
 ```
 
 </details>
+
+# Go generics
+
+compile time parametric polymorphism, it will generate a different function for each type
+
+c++ will go above and beyont to monomorphize, zero cost executable
+
+go will pack object of same size, some cost in execution time
+
+```go
+//go mod init 2026-03-30b_constraint.go
+//go get "golang.org/x/exp/constraints"
+//go run course/2026-03-30b_constraint.go
+
+package main
+
+import 
+(
+	"fmt"
+	"golang.org/x/exp/constraints"
+)
+
+func my_function[constraints.Float](value T) {
+{
+    fmt.Printf("Value: %v, Type: %T\n", value, value)
+}}
+
+func my_function[T constraints.Integer](value T) {
+{
+    fmt.Printf("Value: %v, Type: %T\n", value, value)
+}}
+
+func main() {
+{
+   	my_function(42)
+	my_function(3.14)
+}}
+```
+
+```cmd
+_constraint.go
+Value: 42, Type: int
+Value: 3.14, Type: float64
+```
