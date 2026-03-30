@@ -25,7 +25,7 @@ import
     "os"
 	"bufio"
     "strings"
-	//"strconv"
+	"strconv"
 	"bytes"
 )
 
@@ -81,7 +81,7 @@ func Fn_sequence_reader(i_s_file_path string)(
 }}
 
 // -----------------------------------------------------------------------------
-// SPLITTER
+// STRUCTURE PAIR 
 // -----------------------------------------------------------------------------
 //
 // St_pair represents a numeric range "A-B". The two integers are stored
@@ -95,14 +95,13 @@ func Fn_sequence_reader(i_s_file_path string)(
 
 type St_pair struct
 {
-    s_value [2]string
+    n_value [2]int
 }
 
 func (i_st_pair St_pair) String() string {
 {
-    return fmt.Sprintf("%s-%s", i_st_pair.s_value[0], i_st_pair.s_value[1])
+    return fmt.Sprintf("%d-%d", i_st_pair.n_value[0], i_st_pair.n_value[1])
 }}
-
 
 // -----------------------------------------------------------------------------
 // Fn_find_pair_in_content
@@ -155,9 +154,17 @@ func Fn_find_pair_in_content(i_as_content []string)(
                 return nil, fmt.Errorf("invalid pair format: %s", s_chunk)
             }
 
+
+			n_left, e_error_left := strconv.Atoi(as_range[0])
+			n_right, e_error_right := strconv.Atoi(as_range[1])
+			if e_error_left != nil || e_error_right != nil {
+			{
+				return nil, fmt.Errorf("invalid number in token: %s", s_chunk)
+			}}
+
             // Append pair
             ast_pair = append(ast_pair, St_pair{
-                s_value: [2]string{as_range[0], as_range[1]},
+                n_value: [2]int{n_left, n_right},
             })
         }}
     }}
@@ -211,9 +218,9 @@ func Fn_split_scanner(i_s_file_path string) ([]St_pair, error) {
 	var fn_split_comma bufio.SplitFunc = func(
 		i_s_data []byte,
 		i_x_end_of_file bool) (
-		n_index_advance int,
-		i_s_tokens []byte,
-		e_error error) {
+		o_n_index_advance int,
+		o_s_tokens []byte,
+		o_e_error error) {
 	{
 			// Look for a comma
 			if n_index := bytes.IndexByte(i_s_data, ','); n_index >= 0 {
@@ -251,7 +258,14 @@ func Fn_split_scanner(i_s_file_path string) ([]St_pair, error) {
             return nil, fmt.Errorf("invalid token: %s", i_s_tokens)
         }}
 
-		ast_pair = append(ast_pair, St_pair{s_value: [2]string{i_as_part[0], i_as_part[1]}} )
+		n_left, e_error_left := strconv.Atoi(i_as_part[0])
+        n_right, e_error_right := strconv.Atoi(i_as_part[1])
+        if e_error_left != nil || e_error_right != nil {
+		{
+            return nil, fmt.Errorf("invalid number in token: %s", i_s_tokens)
+        }}
+
+		ast_pair = append(ast_pair, St_pair{n_value: [2]int{n_left, n_right}} )
     }}
 
     if e_error := cl_scanner.Err(); e_error != nil {
@@ -260,6 +274,57 @@ func Fn_split_scanner(i_s_file_path string) ([]St_pair, error) {
     }}
 
     return ast_pair, nil
+}}
+
+// -----------------------------------------------------------------------------
+// CHECK MIRROR
+// -----------------------------------------------------------------------------
+// Fn_is_half_number_same determines whether an integer can be split into two
+// equal-length halves AND whether those halves contain identical digit sequences.
+//
+// RULES:
+//   • Odd number of digits  → invalid (o_x_invalid = true)
+//   • Even digits, halves differ → valid format but NOT same (o_x_invalid = true)
+//   • Even digits, halves equal → valid format AND same (o_x_invalid = false)
+//
+// RETURNS:
+//   o_x_invalid = true  → number cannot be split evenly (odd digit count)
+//   o_x_invalid = false → number is splittable; halves may or may not match
+//   o_e_error   = nil   → always nil unless future logic adds errors
+//
+// EXAMPLES:
+//   12345   → odd digits → invalid
+//   123123  → even digits, halves equal → valid
+//   123321  → even digits, halves differ → valid
+//
+func Fn_is_half_number_same(i_n_value int) (o_x_invalid bool, o_e_error error) {
+{
+    // Convert number to string for digit inspection
+    s_value := strconv.Itoa(i_n_value)
+
+    // Check if digit count is even
+    if (len(s_value) % 2 != 0) {
+    {
+        // Cannot split evenly → invalid
+        return true, nil
+    }}
+
+    // Compute midpoint
+    n_mid := len(s_value) / 2
+
+    // Extract halves
+    s_left  := s_value[:n_mid]
+    s_right := s_value[n_mid:]
+
+    // Compare halves
+    if (s_left == s_right) {
+    {
+        // Halves match → valid, not invalid
+        return true, nil
+    }}
+
+    // Halves do not match → still valid format
+    return false, nil
 }}
 
 // -----------------------------------------------------------------------------
@@ -317,7 +382,7 @@ func Part1() {
         return
     }}
 
-	if (false) {
+	if (true) {
 	{
 		fmt.Printf("=========Extract Pairs=======\n")
 		fmt.Printf("Pairs: %d\n", len(ast_pair))
@@ -327,13 +392,12 @@ func Part1() {
 			log.Printf("%s", st_pair )
 		}}
 	}}
-	*/ 
+	*/
 
 	//-----------------------------------------------------------------------------
-	// 
+	// SCANNER SPLITTER THAT USES SPLIT LAMBDA AND IS INCOMPREHENSIBLE
 	//-----------------------------------------------------------------------------
 
-	
 	ast_pair, e_error := Fn_split_scanner( s_puzzle_path )
     if (e_error != nil) {
     {
@@ -351,6 +415,7 @@ func Part1() {
 			log.Printf("%s", st_pair )
 		}}
 	}}
+	
 
 	log.Printf("STOP LOG")
 }}
