@@ -224,4 +224,20 @@ Parallelism executing many timgs at the same time
 
 Go claim a million gorutines
 
+# switch
 
+sequential non blocking
+
+
+# select
+
+can be mor erandom access
+
+can be blocking
+
+using default, select is not blocking
+
+select case value := <-channel
+default
+
+let you check that the channel is closed
