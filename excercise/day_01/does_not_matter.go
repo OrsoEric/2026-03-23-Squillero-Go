@@ -144,7 +144,6 @@ func Fn_zero_counter_from_instruction(
 				{
 					n_cnt_zero += 1
 				}}
-
 			}} else if n_step > 0 {
 			{
 				//If I have steps left
@@ -172,8 +171,6 @@ func Fn_zero_counter_from_instruction(
 				{
 					n_cnt_zero += 1
 				}}
-
-
 			}} else {
 			{
 				break
@@ -198,7 +195,8 @@ func Fn_zero_counter_from_instruction(
 // PART 1
 //-----------------------------------------------------------------------------
 
-func Part12( i_x_measure_zero_during_passage bool ) {
+func Part12(
+	i_x_measure_zero_during_passage bool ) {
 {
 	fmt.Println("Shaka, when the walls fell")
 
