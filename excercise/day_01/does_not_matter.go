@@ -7,22 +7,30 @@
 
 package day_01
 
+//go get strconv
 import
 (
     "bufio"
     "fmt"
     "os"
     "strings"
+	"strconv"
 )
+
+
+
+//-----------------------------------------------------------------------------
+// FILE READER
+//-----------------------------------------------------------------------------
 
 type Fn_sequence_reader struct
 {
-    Path string
+    I_s_path string
 }
 
 func (i_cl_file *Fn_sequence_reader) Read() ([]string, error) {
 {
-    i_st_file, e_error := os.Open(i_cl_file.Path)
+    i_st_file, e_error := os.Open(i_cl_file.I_s_path)
     if (e_error != nil) {
     {
         return nil, e_error
@@ -49,13 +57,53 @@ func (i_cl_file *Fn_sequence_reader) Read() ([]string, error) {
     return s_content, nil
 }}
 
+type St_instruction struct
+{
+    x_right bool
+    n_step  int
+}
+
+func Fn_decode_sequence(seq []string) ([]St_instruction, error) {
+{
+    var out []St_instruction
+
+    for _, s := range seq {
+    {
+        if (len(s) < 2) {
+        {
+            return nil, fmt.Errorf("invalid token: %s", s)
+        }}
+
+        dir := s[0]
+        numStr := s[1:]
+
+        amt, err := strconv.Atoi(numStr)
+        if (err != nil) {
+        {
+            return nil, fmt.Errorf("invalid number in token %s", s)
+        }}
+
+        step := St_instruction{
+            x_right: (dir == 'R'),
+            n_step:  amt,
+        }
+
+        out = append(out, step)
+    }}
+
+    return out, nil
+}}
+
+
 // function definition
 func Shaka() {
 {
 	fmt.Println("Shaka, when the walls fell")
 
+	//STEP1: read the instructions
+
 	cl_sequence_reader := Fn_sequence_reader{
-         Path: "day_01/puzzle_input.txt",
+    	I_s_path: "day_01/puzzle_input.txt",
 	}
 
     as_sequence, e_error := cl_sequence_reader.Read()
@@ -65,8 +113,30 @@ func Shaka() {
         return
     }}
 
-    for _, s := range as_sequence {
+	if (false) {
+	{
+		fmt.Println(len(as_sequence))
+		for _, s := range as_sequence {
+		{
+			fmt.Println(s)
+		}}
+	}}
+
+	//STEP2: decode the sequence into a structure
+
+	decoded, err := Fn_decode_sequence(as_sequence)
+    if (err != nil) {
     {
-        fmt.Println(s)
+        fmt.Println("Error:", err)
+        return
     }}
+
+	if (true) {
+	{
+		fmt.Println("Sequence Length: %d", len(decoded))
+		for _, d := range decoded {
+		{
+			fmt.Printf("Right=%v  Step=%d\n", d.x_right, d.n_step)
+		}}
+	}}
 }}

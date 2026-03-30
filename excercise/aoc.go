@@ -1,6 +1,8 @@
-//cd excercise
-//go mod init aoc
-//go run aoc.go
+/*
+cd excercise
+go mod init aoc
+go run aoc.go
+*/
 package main
 
 import 
