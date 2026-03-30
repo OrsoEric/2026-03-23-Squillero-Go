@@ -112,7 +112,7 @@ func Fn_decode_sequence(i_as_line []string) ([]St_instruction, error) {
 // ZERO COUNTER
 //-----------------------------------------------------------------------------
 
-func Fn_zero_counter_from_instruction(i_n_start int, i_ast_instruction []St_instruction) (int, error) {
+func Fn_zero_counter_from_instruction(i_n_start int, i_ast_instruction []St_instruction, i_x_measure_zero_during_passage bool) (int, error) {
 {
 	var n_cnt_zero int = 0
 	var n_dial int = i_n_start
@@ -123,9 +123,20 @@ func Fn_zero_counter_from_instruction(i_n_start int, i_ast_instruction []St_inst
 
 		for {
 		{
-			//If I have steps left
-			if n_step > 0 {
+			if n_step >= 100 {
 			{
+				//I do a full rotation that does not change the dial position
+				n_step -= 100
+
+				//a full rotation HAS to transit through zero
+				if i_x_measure_zero_during_passage == true {	
+				{
+					n_cnt_zero += 1
+				}}
+
+			}} else if n_step > 0 {
+			{
+				//If I have steps left
 				n_step -= 1
 
 				if st_instruction.x_right == true {
@@ -145,13 +156,21 @@ func Fn_zero_counter_from_instruction(i_n_start int, i_ast_instruction []St_inst
 
 				}}
 
+				//measure during rotation
+				if n_dial == 0 && i_x_measure_zero_during_passage == true {	
+				{
+					n_cnt_zero += 1
+				}}
+
+
 			}} else {
 			{
 				break
 			}}
 		}}
 
-		if (n_dial == 0) {	
+		//measure zero at the end of the dial 
+		if n_dial == 0 && i_x_measure_zero_during_passage == false {	
 		{
 			n_cnt_zero += 1
 		}}
@@ -168,7 +187,7 @@ func Fn_zero_counter_from_instruction(i_n_start int, i_ast_instruction []St_inst
 // PART 1
 //-----------------------------------------------------------------------------
 
-func Part1() {
+func Part12( i_x_measure_zero_during_passage bool ) {
 {
 	fmt.Println("Shaka, when the walls fell")
 
@@ -214,7 +233,7 @@ func Part1() {
 	}}
 
 	//STEP3: count the zeros following the instructuibns
-	n_cnt_zero, e_error := Fn_zero_counter_from_instruction(50, ast_instruction)
+	n_cnt_zero, e_error := Fn_zero_counter_from_instruction(50, ast_instruction, i_x_measure_zero_during_passage)
 
 
 	fmt.Printf("Dials Zero : %d\n", n_cnt_zero )

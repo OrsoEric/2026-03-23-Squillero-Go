@@ -12,5 +12,9 @@ import
 // function definition
 func main() {
 {
-	day_01.Part1()
+	//part 1 measure passage at the end of the dial
+	//day_01.Part12( false )
+
+	//Part 2 measures passage while the dial is moving
+	day_01.Part12( true )
 }}
