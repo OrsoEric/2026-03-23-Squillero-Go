@@ -364,7 +364,7 @@ func Fn_is_half_number_same(
         return true, nil
     }} else {
 	{
-		log.Printf("NOT SAME %s %s", s_left, s_right)
+		//log.Printf("NOT SAME %s %s", s_left, s_right)
 	}}
 
 
@@ -398,7 +398,8 @@ func Part1() {
 	// CLASSICAL READ FILE AND PRICESS
 	//-----------------------------------------------------------------------------
 
-	var s_puzzle_path string = "day_02/puzzle_cue.txt"
+	//var s_puzzle_path string = "day_02/puzzle_cue.txt"
+	var s_puzzle_path string = "day_02/puzzle_input.txt"
 
 	/*
 	as_content, e_error := Fn_sequence_reader( s_puzzle_path )
