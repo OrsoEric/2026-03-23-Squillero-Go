@@ -295,7 +295,7 @@ func Fn_scan_pair(
 	for _, st_pair := range(i_ast_pair) {
 	{
 		//for each value in the range
-		for n_cnt := st_pair.n_value[0]; n_cnt <= st_pair.n_value[0]; n_cnt++ {
+		for n_cnt := st_pair.n_value[0]; n_cnt <= st_pair.n_value[1]; n_cnt++ {
 		{
 			x_invalid, e_error := Fn_is_half_number_same( n_cnt ) 
 			if e_error != nil {
@@ -334,7 +334,10 @@ func Fn_scan_pair(
 //   123123  → even digits, halves equal → valid
 //   123321  → even digits, halves differ → valid
 //
-func Fn_is_half_number_same(i_n_value int) (o_x_invalid bool, o_e_error error) {
+func Fn_is_half_number_same(
+	i_n_value int) (
+	o_x_invalid bool,
+	o_e_error error) {
 {
     // Convert number to string for digit inspection
     s_value := strconv.Itoa(i_n_value)
@@ -342,8 +345,8 @@ func Fn_is_half_number_same(i_n_value int) (o_x_invalid bool, o_e_error error) {
     // Check if digit count is even
     if (len(s_value) % 2 != 0) {
     {
-        // Cannot split evenly → invalid
-        return true, nil
+        // Cannot split evenly
+        return false, nil
     }}
 
     // Compute midpoint
@@ -356,11 +359,16 @@ func Fn_is_half_number_same(i_n_value int) (o_x_invalid bool, o_e_error error) {
     // Compare halves
     if (s_left == s_right) {
     {
-        // Halves match → valid, not invalid
+		log.Printf("SAME %s %s", s_left, s_right)
+        // Halves match
         return true, nil
-    }}
+    }} else {
+	{
+		log.Printf("NOT SAME %s %s", s_left, s_right)
+	}}
 
-    // Halves do not match → still valid format
+
+    // Halves do not match
     return false, nil
 }}
 
